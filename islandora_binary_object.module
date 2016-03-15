@@ -92,9 +92,9 @@ function islandora_binary_object_islandora_required_objects(IslandoraTuque $conn
 }
 
 /**
- * Implements hook_islandora_xml_form_builder_form_associations().
+ * Implements hook_xml_form_builder_form_associations().
  */
-function islandora_binary_object_islandora_xml_form_builder_form_associations() {
+function islandora_binary_object_xml_form_builder_form_associations() {
   return array(
     'islandora_binary_object_mods_form' => array(
       'content_model' => 'islandora:binaryObjectCModel',
@@ -108,9 +108,9 @@ function islandora_binary_object_islandora_xml_form_builder_form_associations() 
 }
 
 /**
- * Implements hook_islandora_xml_form_builder_forms().
+ * Implements hook_xml_form_builder_forms().
  */
-function islandora_binary_object_islandora_xml_form_builder_forms() {
+function islandora_binary_object_xml_form_builder_forms() {
   $module_path = drupal_get_path('module', 'islandora_binary_object');
   return array(
     'Binary Object MODS form' => array(
