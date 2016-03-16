@@ -113,7 +113,7 @@ function islandora_binary_object_islandora_xml_form_builder_form_associations() 
  * Implements hook_islandora_xml_form_builder_forms().
  */
 function islandora_binary_object_islandora_xml_form_builder_forms() {
-  $message = islandora_deprecated('7.x-1.8', '');
+  $message = islandora_deprecated('7.x-1.8', t('Use xml_form_builder_forms instead.'));
   trigger_error(filter_xss($message), E_USER_DEPRECATED);
   $module_path = drupal_get_path('module', 'islandora_binary_object');
   return array(
