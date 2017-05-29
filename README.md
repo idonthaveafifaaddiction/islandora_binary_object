@@ -17,4 +17,5 @@ Islandora Compound Solution Pack.
 
 Current maintainers:
 
+* [William Panting](https://github.com/willtp87)
 * [discoverygarden](https://github.com/discoverygarden)
