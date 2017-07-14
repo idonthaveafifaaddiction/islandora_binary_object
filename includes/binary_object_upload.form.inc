@@ -19,12 +19,13 @@
 function islandora_binary_object_upload_form(array $form, array &$form_state) {
   $upload_size = min((int) ini_get('post_max_size'), (int) ini_get('upload_max_filesize'));
   $thumbnail_extensions = array('gif jpg png jpeg');
+  $upload_required = variable_get('islandora_require_obj_upload', TRUE);
 
   return array(
     'file' => array(
       '#title' => t('File'),
       '#type' => 'managed_file',
-      '#required' => TRUE,
+      '#required' => $upload_required,
       '#description' => t('Select a file to upload.<br/>Files must be less than <strong>@size MB.</strong>', array('@size' => $upload_size)),
       '#default_value' => isset($form_state['values']['file']) ? $form_state['values']['file'] : NULL,
       '#upload_location' => 'temporary://',
