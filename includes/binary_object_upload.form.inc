@@ -93,44 +93,44 @@ function islandora_binary_object_upload_form_submit(array $form, array &$form_st
   module_load_include('inc', 'islandora', 'includes/utilities');
   $object = islandora_ingest_form_get_object($form_state);
 
-  if (!isset($object['OBJ'])) {
-    $datastream = $object->constructDatastream('OBJ', 'M');
-  }
-  else {
-    $datastream = $object['OBJ'];
-  }
-  $file = file_load(isset($form_state['values']['file']) ? $form_state['values']['file'] : NULL);
-  $datastream->setContentFromFile($file->uri, FALSE);
-  if ($datastream->label != $file->filename) {
-    $datastream->label = $file->filename;
-  }
-  if ($datastream->mimetype != $file->filemime) {
-    $datastream->mimetype = $file->filemime;
-  }
+  if (isset($form_state['values']['file'] {
+    $file = file_load($form_state['values']['file']);
+    $datastream->setContentFromFile($file->uri, FALSE);
+    
+    if ($datastream->label != $file->filename) {
+      $datastream->label = $file->filename;
+    }
+    
+    if ($datastream->mimetype != $file->filemime) {
+      $datastream->mimetype = $file->filemime;
+    } 
 
-  if (!isset($object['OBJ'])) {
-    $object->ingestDatastream($datastream);
-  }
-
-  if ($form_state['values']['supply_thumbnail']) {
-    $thumbnail_file = file_load($form_state['values']['thumbnail_file']);
-    if ($form_state['values']['scale_thumbnail']) {
-      islandora_scale_thumbnail($thumbnail_file, 200, 200);
+    if (!isset($object['OBJ'])) {
+      $object->ingestDatastream($datastream);
     }
 
-    if (empty($object['TN'])) {
-      $tn = $object->constructDatastream('TN', 'M');
-      $object->ingestDatastream($tn);
-    }
-    else {
-      $tn = $object['TN'];
-    }
-    $tn->setContentFromFile($thumbnail_file->uri, FALSE);
-    if ($tn->label != $thumbnail_file->filename) {
+    if ($form_state['values']['supply_thumbnail']) {
+      $thumbnail_file = file_load($form_state['values']['thumbnail_file']);
+      if ($form_state['values']['scale_thumbnail']) {
+        islandora_scale_thumbnail($thumbnail_file, 200, 200);
+      }
+
+      if (empty($object['TN'])) {
+        $tn = $object->constructDatastream('TN', 'M');
+        $object->ingestDatastream($tn);
+      }
+      else {
+        $tn = $object['TN'];
+      }
+      $tn->setContentFromFile($thumbnail_file->uri, FALSE);
+      
+      if ($tn->label != $thumbnail_file->filename) {
       $tn->label = $thumbnail_file->filename;
-    }
-    if ($tn->mimetype != $thumbnail_file->filemime) {
-      $tn->mimetype = $thumbnail_file->filemime;
+      }
+      
+      if ($tn->mimetype != $thumbnail_file->filemime) {
+        $tn->mimetype = $thumbnail_file->filemime;
+      }
     }
   }
 }
