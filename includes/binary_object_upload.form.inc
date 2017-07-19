@@ -99,7 +99,7 @@ function islandora_binary_object_upload_form_submit(array $form, array &$form_st
   else {
     $datastream = $object['OBJ'];
   }
-  $file = file_load(isset($form_state['values']['file']));
+  $file = file_load(isset($form_state['values']['file']) ? $form_state['values']['file'] : NULL);
   $datastream->setContentFromFile($file->uri, FALSE);
   if ($datastream->label != $file->filename) {
     $datastream->label = $file->filename;
