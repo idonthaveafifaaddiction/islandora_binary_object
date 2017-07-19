@@ -108,9 +108,9 @@ function islandora_binary_object_upload_form_submit(array $form, array &$form_st
     if (!isset($object['OBJ'])) {
       $object->ingestDatastream($datastream);
     }
- }
+  }
 
- if ($form_state['values']['supply_thumbnail']) 
+  if ($form_state['values']['supply_thumbnail'])
       $thumbnail_file = file_load($form_state['values']['thumbnail_file']);
     if ($form_state['values']['scale_thumbnail']) {
       islandora_scale_thumbnail($thumbnail_file, 200, 200);
