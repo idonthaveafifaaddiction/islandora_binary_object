@@ -93,7 +93,7 @@ function islandora_binary_object_upload_form_submit(array $form, array &$form_st
   module_load_include('inc', 'islandora', 'includes/utilities');
   $object = islandora_ingest_form_get_object($form_state);
 
-  if (isset($form_state['values']['file'] {
+  if (isset($form_state['values']['file'])) {
     $file = file_load($form_state['values']['file']);
     $datastream->setContentFromFile($file->uri, FALSE);
 
@@ -108,29 +108,29 @@ function islandora_binary_object_upload_form_submit(array $form, array &$form_st
     if (!isset($object['OBJ'])) {
       $object->ingestDatastream($datastream);
     }
+ }
 
-    if ($form_state['values']['supply_thumbnail']) {
+ if ($form_state['values']['supply_thumbnail']) 
       $thumbnail_file = file_load($form_state['values']['thumbnail_file']);
-      if ($form_state['values']['scale_thumbnail']) {
-        islandora_scale_thumbnail($thumbnail_file, 200, 200);
-      }
+    if ($form_state['values']['scale_thumbnail']) {
+      islandora_scale_thumbnail($thumbnail_file, 200, 200);
+    }
 
-      if (empty($object['TN'])) {
-        $tn = $object->constructDatastream('TN', 'M');
-        $object->ingestDatastream($tn);
-      }
-      else {
-        $tn = $object['TN'];
-      }
-      $tn->setContentFromFile($thumbnail_file->uri, FALSE);
+    if (empty($object['TN'])) {
+      $tn = $object->constructDatastream('TN', 'M');
+      $object->ingestDatastream($tn);
+    }
+    else {
+      $tn = $object['TN'];
+    }
+    $tn->setContentFromFile($thumbnail_file->uri, FALSE);
 
-      if ($tn->label != $thumbnail_file->filename) {
-      $tn->label = $thumbnail_file->filename;
-      }
+    if ($tn->label != $thumbnail_file->filename) {
+    $tn->label = $thumbnail_file->filename;
+    }
 
-      if ($tn->mimetype != $thumbnail_file->filemime) {
-        $tn->mimetype = $thumbnail_file->filemime;
-      }
+    if ($tn->mimetype != $thumbnail_file->filemime) {
+      $tn->mimetype = $thumbnail_file->filemime;
     }
   }
 }
