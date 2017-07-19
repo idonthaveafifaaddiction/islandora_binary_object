@@ -127,7 +127,7 @@ function islandora_binary_object_upload_form_submit(array $form, array &$form_st
     $tn->setContentFromFile($thumbnail_file->uri, FALSE);
 
     if ($tn->label != $thumbnail_file->filename) {
-    $tn->label = $thumbnail_file->filename;
+      $tn->label = $thumbnail_file->filename;
     }
 
     if ($tn->mimetype != $thumbnail_file->filemime) {
