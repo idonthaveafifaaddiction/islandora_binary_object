@@ -95,9 +95,9 @@ function islandora_binary_object_upload_form_submit(array $form, array &$form_st
 
   if ($form_state['values']['file']) {
     $file = file_load($form_state['values']['file']);
-    $datastream = isset($object['OBJ'])?
-      $object['OBJ']:
-      $datastream ->constructDatastream('OBJ', 'M');
+    $datastream = isset($object['OBJ']) ?
+      $object['OBJ'] :
+      $datastream->constructDatastream('OBJ', 'M');
 
       $datastream->setContentFromFile($file->uri, FALSE);
 
