@@ -93,21 +93,25 @@ function islandora_binary_object_upload_form_submit(array $form, array &$form_st
   module_load_include('inc', 'islandora', 'includes/utilities');
   $object = islandora_ingest_form_get_object($form_state);
 
-  if (isset($form_state['values']['file'])) {
+  if ($form_state['values']['file']) {
     $file = file_load($form_state['values']['file']);
-    $datastream->setContentFromFile($file->uri, FALSE);
+    $datastream = isset($object['OBJ'])?
+      $object['OBJ']:
+      $datastream ->constructDatastream('OBJ', 'M');
 
-    if ($datastream->label != $file->filename) {
-      $datastream->label = $file->filename;
-    }
+      $datastream->setContentFromFile($file->uri, FALSE);
 
-    if ($datastream->mimetype != $file->filemime) {
-      $datastream->mimetype = $file->filemime;
-    }
+      if ($datastream->label != $file->filename) {
+        $datastream->label = $file->filename;
+      }
 
-    if (!isset($object['OBJ'])) {
-      $object->ingestDatastream($datastream);
-    }
+      if ($datastream->mimetype != $file->filemime) {
+        $datastream->mimetype = $file->filemime;
+      }
+
+      if (!isset($object['OBJ'])) {
+        $object->ingestDatastream($datastream);
+      }
   }
 
   if ($form_state['values']['supply_thumbnail']) {
