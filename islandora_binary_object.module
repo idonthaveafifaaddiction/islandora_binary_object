@@ -157,7 +157,7 @@ function islandora_binary_object_islandora_binaryObjectCModel_islandora_view_obj
 function islandora_binary_object_islandora_binaryObjectCModel_islandora_derivative() {
   return array(
     array(
-      'source_dsid' => 'OBJ',
+      'source_dsid' => NULL,
       'destination_dsid' => 'TN',
       'weight' => '0',
       'function' => array(

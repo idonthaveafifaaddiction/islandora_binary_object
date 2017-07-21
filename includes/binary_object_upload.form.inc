@@ -24,7 +24,7 @@ function islandora_binary_object_upload_form(array $form, array &$form_state) {
     'file' => array(
       '#title' => t('File'),
       '#type' => 'managed_file',
-      '#required' => TRUE,
+      '#required' => variable_get('islandora_require_obj_upload', TRUE),
       '#description' => t('Select a file to upload.<br/>Files must be less than <strong>@size MB.</strong>', array('@size' => $upload_size)),
       '#default_value' => isset($form_state['values']['file']) ? $form_state['values']['file'] : NULL,
       '#upload_location' => 'temporary://',
@@ -93,27 +93,30 @@ function islandora_binary_object_upload_form_submit(array $form, array &$form_st
   module_load_include('inc', 'islandora', 'includes/utilities');
   $object = islandora_ingest_form_get_object($form_state);
 
-  if (!isset($object['OBJ'])) {
-    $datastream = $object->constructDatastream('OBJ', 'M');
-  }
-  else {
-    $datastream = $object['OBJ'];
-  }
-  $file = file_load($form_state['values']['file']);
-  $datastream->setContentFromFile($file->uri, FALSE);
-  if ($datastream->label != $file->filename) {
-    $datastream->label = $file->filename;
-  }
-  if ($datastream->mimetype != $file->filemime) {
-    $datastream->mimetype = $file->filemime;
-  }
+  if ($form_state['values']['file']) {
+    $file = file_load($form_state['values']['file']);
+    $datastream = isset($object['OBJ']) ?
+      $object['OBJ'] :
+      $datastream = $object->constructDatastream('OBJ', 'M');
 
-  if (!isset($object['OBJ'])) {
-    $object->ingestDatastream($datastream);
+    $datastream->setContentFromFile($file->uri, FALSE);
+
+    if ($datastream->label != $file->filename) {
+      $datastream->label = $file->filename;
+    }
+
+    if ($datastream->mimetype != $file->filemime) {
+      $datastream->mimetype = $file->filemime;
+    }
+
+    if (!isset($object['OBJ'])) {
+      $object->ingestDatastream($datastream);
+    }
   }
 
   if ($form_state['values']['supply_thumbnail']) {
     $thumbnail_file = file_load($form_state['values']['thumbnail_file']);
+
     if ($form_state['values']['scale_thumbnail']) {
       islandora_scale_thumbnail($thumbnail_file, 200, 200);
     }
@@ -126,9 +129,11 @@ function islandora_binary_object_upload_form_submit(array $form, array &$form_st
       $tn = $object['TN'];
     }
     $tn->setContentFromFile($thumbnail_file->uri, FALSE);
+
     if ($tn->label != $thumbnail_file->filename) {
       $tn->label = $thumbnail_file->filename;
     }
+
     if ($tn->mimetype != $thumbnail_file->filemime) {
       $tn->mimetype = $thumbnail_file->filemime;
     }

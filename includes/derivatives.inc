@@ -33,7 +33,7 @@ function islandora_binary_object_create_thumbnail(AbstractObject $object, $force
       }
       // Go see if we have an association that exists for this MIME type and
       // if we do use that. If not default back to the generic image.
-      if (islandora_binary_object_check_mime_type($object['OBJ']->mimetype)) {
+      if (isset($object['OBJ']) && islandora_binary_object_check_mime_type($object['OBJ']->mimetype)) {
         $fid_to_load = islandora_binary_object_retrieve_file_id_by_association($object['OBJ']->mimetype);
         $file = file_load($fid_to_load);
         $ds->mimetype = $file->filemime;
