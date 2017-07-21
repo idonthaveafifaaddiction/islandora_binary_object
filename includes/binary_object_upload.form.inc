@@ -120,22 +120,22 @@ function islandora_binary_object_upload_form_submit(array $form, array &$form_st
     if ($form_state['values']['scale_thumbnail']) {
       islandora_scale_thumbnail($thumbnail_file, 200, 200);
     }
-  }
 
-  if (empty($object['TN'])) {
-    $tn = $object->constructDatastream('TN', 'M');
-    $object->ingestDatastream($tn);
-  }
-  else {
-    $tn = $object['TN'];
-  }
-  $tn->setContentFromFile($thumbnail_file->uri, FALSE);
+    if (empty($object['TN'])) {
+      $tn = $object->constructDatastream('TN', 'M');
+      $object->ingestDatastream($tn);
+    }
+    else {
+      $tn = $object['TN'];
+    }
+    $tn->setContentFromFile($thumbnail_file->uri, FALSE);
 
-  if ($tn->label != $thumbnail_file->filename) {
-    $tn->label = $thumbnail_file->filename;
-  }
+    if ($tn->label != $thumbnail_file->filename) {
+      $tn->label = $thumbnail_file->filename;
+    }
 
-  if ($tn->mimetype != $thumbnail_file->filemime) {
-    $tn->mimetype = $thumbnail_file->filemime;
+    if ($tn->mimetype != $thumbnail_file->filemime) {
+      $tn->mimetype = $thumbnail_file->filemime;
+    }
   }
 }
