@@ -1,0 +1,7 @@
+name: 'Islandora Binary Object Storage'
+description: 'A binary object storage solution pack for Islandora'
+dependencies:
+  - islandora
+package: 'Islandora Tools'
+core: 8.x
+type: module
