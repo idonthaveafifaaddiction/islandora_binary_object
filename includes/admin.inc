@@ -18,7 +18,15 @@
  */
 function islandora_binary_object_admin($form, &$form_state) {
   module_load_include('inc', 'islandora_binary_object', 'includes/db');
-  drupal_add_css(drupal_get_path('module', 'islandora_binary_object') . '/css/islandora_binary_object.css');
+  // @FIXME
+// The Assets API has totally changed. CSS, JavaScript, and libraries are now
+// attached directly to render arrays using the #attached property.
+// 
+// 
+// @see https://www.drupal.org/node/2169605
+// @see https://www.drupal.org/node/2408597
+// drupal_add_css(drupal_get_path('module', 'islandora_binary_object') . '/css/islandora_binary_object.css');
+
   $ajax_add_mime_types = array();
   $db_remove_mime_types = array();
   // Use what may have already been carried over from previous AJAXing.
@@ -71,7 +79,7 @@ function islandora_binary_object_admin($form, &$form_state) {
   $associated_thumbs = islandora_binary_object_retrieve_associations();
   foreach ($associated_thumbs as $association) {
     $thumb = file_load($association['fid']);
-    $fieldset_name = drupal_html_id($thumb->filename);
+    $fieldset_name = \Drupal\Component\Utility\Html::getId($thumb->filename);
     $wrapper_name = "$fieldset_name-mime-type-add";
     $form[$fieldset_name] = array(
       '#type' => 'fieldset',
@@ -332,7 +340,7 @@ function islandora_binary_object_admin_submit($form, &$form_state) {
  *   The portion of the form that needs to be rendered.
  */
 function islandora_binary_object_fieldset_ajax($form, $form_state) {
-  return drupal_array_get_nested_value($form, array_slice($form_state['triggering_element']['#parents'], 0, 2));
+  return \Drupal\Component\Utility\NestedArray::getValue($form, array_slice($form_state['triggering_element']['#parents'], 0, 2));
 }
 
 

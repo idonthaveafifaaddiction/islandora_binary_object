@@ -20,48 +20,53 @@ function islandora_binary_object_upload_form(array $form, array &$form_state) {
   $upload_size = min((int) ini_get('post_max_size'), (int) ini_get('upload_max_filesize'));
   $thumbnail_extensions = array('gif jpg png jpeg');
 
-  return array(
-    'file' => array(
-      '#title' => t('File'),
-      '#type' => 'managed_file',
-      '#required' => variable_get('islandora_require_obj_upload', TRUE),
-      '#description' => t('Select a file to upload.<br/>Files must be less than <strong>@size MB.</strong>', array('@size' => $upload_size)),
-      '#default_value' => isset($form_state['values']['file']) ? $form_state['values']['file'] : NULL,
-      '#upload_location' => 'temporary://',
-      '#upload_validators' => array(
-        // Assume its specified in MB.
-        'file_validate_extensions' => array(),
-        'file_validate_size' => array($upload_size * 1024 * 1024),
-      ),
-    ),
-    'supply_thumbnail' => array(
-      '#type' => 'checkbox',
-      '#title' => t('Upload Thumbnail'),
-    ),
-    'thumbnail_section' => array(
-      'thumbnail_file' => array(
-        '#title' => t('Thumbnail File'),
-        '#type' => 'managed_file',
-        '#description' => t('Select a file to upload.<br/>Files must be less than <strong>@size MB.</strong><br/>Allowed file types: <strong>@ext.</strong>', array('@size' => $upload_size, '@ext' => $thumbnail_extensions[0])),
-        '#default_value' => isset($form_state['values']['thumbnail_file']) ? $form_state['values']['thumbnail_file'] : NULL,
-        '#upload_location' => 'temporary://',
-        '#upload_validators' => array(
-          'file_validate_extensions' => $thumbnail_extensions,
-          // Assume its specified in MB.
-          'file_validate_size' => array($upload_size * 1024 * 1024),
-        ),
-      ),
-      'scale_thumbnail' => array(
-        '#type' => 'checkbox',
-        '#title' => t('Scale Thumbnail'),
-        '#attributes' => array('checked' => 'checked'),
-      ),
-      '#type' => 'item',
-      '#states' => array(
-        'visible' => array('#edit-supply-thumbnail' => array('checked' => TRUE)),
-      ),
-    ),
-  );
+  // @FIXME
+// // @FIXME
+// // This looks like another module's variable. You'll need to rewrite this call
+// // to ensure that it uses the correct configuration object.
+// return array(
+//     'file' => array(
+//       '#title' => t('File'),
+//       '#type' => 'managed_file',
+//       '#required' => variable_get('islandora_require_obj_upload', TRUE),
+//       '#description' => t('Select a file to upload.<br/>Files must be less than <strong>@size MB.</strong>', array('@size' => $upload_size)),
+//       '#default_value' => isset($form_state['values']['file']) ? $form_state['values']['file'] : NULL,
+//       '#upload_location' => 'temporary://',
+//       '#upload_validators' => array(
+//         // Assume its specified in MB.
+//         'file_validate_extensions' => array(),
+//         'file_validate_size' => array($upload_size * 1024 * 1024),
+//       ),
+//     ),
+//     'supply_thumbnail' => array(
+//       '#type' => 'checkbox',
+//       '#title' => t('Upload Thumbnail'),
+//     ),
+//     'thumbnail_section' => array(
+//       'thumbnail_file' => array(
+//         '#title' => t('Thumbnail File'),
+//         '#type' => 'managed_file',
+//         '#description' => t('Select a file to upload.<br/>Files must be less than <strong>@size MB.</strong><br/>Allowed file types: <strong>@ext.</strong>', array('@size' => $upload_size, '@ext' => $thumbnail_extensions[0])),
+//         '#default_value' => isset($form_state['values']['thumbnail_file']) ? $form_state['values']['thumbnail_file'] : NULL,
+//         '#upload_location' => 'temporary://',
+//         '#upload_validators' => array(
+//           'file_validate_extensions' => $thumbnail_extensions,
+//           // Assume its specified in MB.
+//           'file_validate_size' => array($upload_size * 1024 * 1024),
+//         ),
+//       ),
+//       'scale_thumbnail' => array(
+//         '#type' => 'checkbox',
+//         '#title' => t('Scale Thumbnail'),
+//         '#attributes' => array('checked' => 'checked'),
+//       ),
+//       '#type' => 'item',
+//       '#states' => array(
+//         'visible' => array('#edit-supply-thumbnail' => array('checked' => TRUE)),
+//       ),
+//     ),
+//   );
+
 }
 
 /**
