@@ -1,0 +1,4 @@
+islandora_binary_object.admin:
+  route_name: islandora_binary_object.admin
+  title: 'Binary Object Collection'
+  description: 'Configure settings for Islandora Binary Object'

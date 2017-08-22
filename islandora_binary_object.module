@@ -5,33 +5,6 @@
  */
 
 /**
- * Implements hook_menu().
- */
-function islandora_binary_object_menu() {
-  $items = array();
-  $items['admin/islandora/tools/binary-object-storage'] = array(
-    'title' => 'Binary Object Collection',
-    'description' => 'Configure settings for Islandora Binary Object',
-    'access arguments' => array('administer site configuration'),
-    'page callback' => 'drupal_get_form',
-    'page arguments' => array('islandora_binary_object_admin'),
-    'file' => 'includes/admin.inc',
-  );
-  $items['admin/islandora/tools/binary-object-storage/delete-association/%'] = array(
-    'title' => 'Delete Binary Object Association',
-    'description' => 'Confirm form for deleting a thumbnail association',
-    'access arguments' => array('administer site configuration'),
-    'page callback' => 'drupal_get_form',
-    'page arguments' => array(
-      'islandora_binary_object_delete_association_form',
-      4,
-      5,
-    ),
-    'file' => 'includes/admin.inc',
-  );
-  return $items;
-}
-/**
  * Implements hook_theme().
  */
 function islandora_binary_object_theme($existing, $type, $theme, $path) {

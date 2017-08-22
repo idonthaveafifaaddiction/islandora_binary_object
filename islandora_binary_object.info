@@ -1,6 +1,0 @@
-name = "Islandora Binary Object Storage"
-description = "A binary object storage solution pack for Islandora"
-dependencies[] = islandora
-package = Islandora Tools
-core = 7.x
-version = 7.x-dev

@@ -56,7 +56,7 @@ function islandora_binary_object_schema() {
       ),
     ),
     'unique keys' => array(
-      'mimetype' => array('mimetype'),
+      'mimetype' => array(array('mimetype', 191)),
     ),
   );
   return $schema;
