@@ -9,24 +9,6 @@
  */
 function template_preprocess_islandora_binary_object(array &$variables) {
   module_load_include('inc', 'islandora', 'includes/metadata');
-  // @FIXME
-// The Assets API has totally changed. CSS, JavaScript, and libraries are now
-// attached directly to render arrays using the #attached property.
-// 
-// 
-// @see https://www.drupal.org/node/2169605
-// @see https://www.drupal.org/node/2408597
-// drupal_add_js('misc/form.js');
-
-  // @FIXME
-// The Assets API has totally changed. CSS, JavaScript, and libraries are now
-// attached directly to render arrays using the #attached property.
-// 
-// 
-// @see https://www.drupal.org/node/2169605
-// @see https://www.drupal.org/node/2408597
-// drupal_add_js('misc/collapse.js');
-
 
   $islandora_object = $variables['islandora_object'];
 
@@ -65,8 +47,8 @@ function template_preprocess_islandora_binary_object(array &$variables) {
 // Calling _theme() directly can alter the expected output and potentially
 // introduce security issues (see https://www.drupal.org/node/2195739). You
 // should use renderable arrays instead.
-// 
-// 
+//
+//
 // @see https://www.drupal.org/node/2195739
 // $variables['islandora_thumbnail_img'] = theme('image', $params);
 
