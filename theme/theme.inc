@@ -16,7 +16,8 @@ function template_preprocess_islandora_binary_object(array &$variables) {
 
   $islandora_object = $variables['islandora_object'];
   if (isset($islandora_object['OBJ']) && islandora_datastream_access(ISLANDORA_VIEW_OBJECTS, $islandora_object['OBJ'])) {
-    $extension = reset(islandora_get_extensions_for_datastream($islandora_object, 'OBJ'));
+    $extensions = islandora_get_extensions_for_datastream($islandora_object, 'OBJ');
+    $extension = reset($extensions);
     $variables['islandora_binary_object_info'] = t('This is a downloadable object of filetype @extension and size @size.', array(
       '@extension' => $extension,
       '@size' => format_size($islandora_object['OBJ']->size),

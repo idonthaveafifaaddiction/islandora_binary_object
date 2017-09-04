@@ -39,7 +39,7 @@
         <ul>
           {% for collection in parent_collections %}
             <li>
-              <a href="islandora/object/{{ collection.id }}">{{ collection.label }}</a>
+              <a href="{{ path('islandora.view_object', {'object' : collection.id}) }}">{{ collection.label }}</a>
             </li>
           {% endfor %}
         </ul>
