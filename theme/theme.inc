@@ -4,30 +4,35 @@
  * Handles the display of binary objects.
  */
 
+use Drupal\Core\Link;
+use Drupal\Core\Url;
+
 /**
  * Implements hook_preprocess_theme().
  */
 function template_preprocess_islandora_binary_object(array &$variables) {
   module_load_include('inc', 'islandora', 'includes/metadata');
+  module_load_include('inc', 'islandora', 'includes/mimetype.utils');
 
   $islandora_object = $variables['islandora_object'];
 
   if (isset($islandora_object['OBJ']) && islandora_datastream_access(ISLANDORA_VIEW_OBJECTS, $islandora_object['OBJ'])) {
-    $mime_detect = new MimeDetect();
-    $extension = $mime_detect->getExtension($islandora_object['OBJ']->mimetype);
-
+    $extension = reset(islandora_get_extensions_for_datastream($islandora_object, $dsid));
     $variables['islandora_binary_object_info'] = t('This is a downloadable object of filetype @extension and size @size.', array(
       '@extension' => $extension,
       '@size' => format_size($islandora_object['OBJ']->size),
     ));
 
-    // @FIXME
-// l() expects a Url object, created from a route name or external URI.
-// $display['download'] = array(
-//       '#type' => 'item',
-//       '#title' => t('Download'),
-//       '#markup' => l(t('@label', array('@label' => $islandora_object['OBJ']->label)), "islandora/object/$islandora_object->id/datastream/OBJ/download"),
-//     );
+    $link = Link::createFromRoute(
+      $islandora_object['OBJ']->label,
+      'islandora.download_datastream',
+      ['object' => $islandora_object->id, 'datastream' => 'OBJ']
+    )->toString();
+    $display['download'] = array(
+      '#type' => 'item',
+      '#title' => t('Download'),
+      '#markup' => $link,
+    );
 
     $variables['islandora_binary_object_download'] = \Drupal::service("renderer")->render($display['download']);
   }
