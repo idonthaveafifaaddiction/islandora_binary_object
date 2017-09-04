@@ -11,7 +11,7 @@ function islandora_binary_object_theme($existing, $type, $theme, $path) {
   return array(
     'islandora_binary_object' => array(
       'file' => 'theme/theme.inc',
-      'template' => 'theme/islandora-binary-object',
+      'template' => 'islandora-binary-object',
       'pattern' => 'islandora_binary_object__',
       'variables' => array('islandora_object' => NULL),
     ),
@@ -112,16 +112,16 @@ function islandora_binary_object_islandora_binaryObjectCModel_islandora_ingest_s
  * Implements hook_CMODEL_PID_islandora_view_object().
  */
 function islandora_binary_object_islandora_binaryObjectCModel_islandora_view_object(AbstractObject $object) {
-  return array(
+  return [
     // XXX: Because islandora_as_renderable_array isn't the best we are going to
     // wrap this in an array.
-    '' => array(
-      array(
+    '' => [
+      [
         '#theme' => 'islandora_binary_object',
         '#islandora_object' => $object,
-      ),
-    ),
-  );
+      ],
+    ],
+  ];
 }
 
 /**
