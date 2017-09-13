@@ -47,7 +47,7 @@ function islandora_binary_object_create_association($fid) {
     ->execute();
   $file = file_load($fid);
   drupal_set_message(t('Created a new association for @filename.', array(
-    '@filename' => $file->get('filename')->value,
+    '@filename' => $file->getFilename(),
   )));
 }
 
