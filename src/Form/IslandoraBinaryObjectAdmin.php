@@ -10,6 +10,7 @@ namespace Drupal\islandora_binary_object\Form;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Render\Element;
+use Drupal\Component\Utility\NestedArray;
 
 class IslandoraBinaryObjectAdmin extends FormBase {
 
@@ -20,88 +21,57 @@ class IslandoraBinaryObjectAdmin extends FormBase {
     return 'islandora_binary_object_admin';
   }
 
-  public function buildForm(array $form, \Drupal\Core\Form\FormStateInterface $form_state) {
+  /**
+   * {@inheritdoc}
+   */
+  public function buildForm(array $form, FormStateInterface $form_state) {
     module_load_include('inc', 'islandora_binary_object', 'includes/db');
-    // @FIXME
-    // The Assets API has totally changed. CSS, JavaScript, and libraries are now
-    // attached directly to render arrays using the #attached property.
-    // 
-    // 
-    // @see https://www.drupal.org/node/2169605
-    // @see https://www.drupal.org/node/2408597
-    // drupal_add_css(drupal_get_path('module', 'islandora_binary_object') . '/css/islandora_binary_object.css');
 
-    $ajax_add_mime_types = [];
-    $db_remove_mime_types = [];
-    // Use what may have already been carried over from previous AJAXing.
-    if (!$form_state->get([
-      'islandora_binary_object'
-      ])) {
-      if (!$form_state->get(['islandora_binary_object', 'ajax_add'])) {
-        $ajax_add_mime_types = $form_state->get([
-          'islandora_binary_object',
-          'ajax_add',
-        ]);
-      }
-      if (!$form_state->get(['islandora_binary_object', 'db_remove'])) {
-        $db_remove_mime_types = $form_state->get([
-          'islandora_binary_object',
-          'db_remove',
-        ]);
+    $mimes_to_add = $form_state->get(['islandora_binary_object', 'ajax_add']);
+    $db_deletions = $form_state->get(['islandora_binary_object', 'db_remove']);
+    foreach ([$mimes_to_add, $db_deletions] as &$item) {
+      if (!is_array($item)) {
+        $item = [];
       }
     }
-    if (!$form_state->getTriggeringElement()) {
-      // Determine which AJAX button was pressed and only care about the content
-    // contained from there.
-      $table_element = $form_state->getTriggeringElement();
-      // Handle adds to our triggered fieldset.
-      if (end($form_state->getTriggeringElement()) == 'add_mimetype_button') {
-        if ($form_state->getValue([$table_element, 'wrapper', 'add_mimetype'])) {
-          $mime_type_to_add = $form_state->getValue([
-            $table_element,
-            'wrapper',
-            'add_mimetype',
-          ]);
-          if (!isset($ajax_add_mime_types[$table_element])) {
-            $ajax_add_mime_types[$table_element] = [];
-          }
-          $ajax_add_mime_types[$table_element][$mime_type_to_add] = $mime_type_to_add;
+    $triggering_element = $form_state->getTriggeringElement();
+    // If this is a rebuild from a trigger, we'll need to update the storage.
+    if ($triggering_element) {
+      $triggering_fieldset = reset($triggering_element['#parents']);
+      // Case: hitting the 'add' button.
+      if (end($triggering_element['#parents']) == 'add_mimetype_button') {
+        if (!isset($mimes_to_add[$triggering_fieldset])) {
+          $mimes_to_add[$triggering_fieldset] = [];
         }
+        $mime_to_add = $form_state->getValue([$triggering_fieldset, 'wrapper', 'add_mimetype']);
+        $mimes_to_add[$triggering_fieldset][$mime_to_add] = $mime_to_add;
       }
-      // Handle removes from our triggered fieldset. Need to keep track of
-      // "removed elements" in the form state so do updates in one swoop. For form
-      // state ones we will just remove it from an array, the database removals
-      // will need to be tracked.
-      if (end($form_state->getTriggeringElement()) == 'remove_selected') {
-        foreach ($form_state->getValue([
-          $table_element,
-          'wrapper',
-          'mimetype_table',
-        ]) as $key => $value) {
-          if ($value !== 0) {
-            // Determine if it's stored in the database or in the form state.
-            if (isset($ajax_add_mime_types[$table_element]) && isset($ajax_add_mime_types[$table_element][$value])) {
-              unset($ajax_add_mime_types[$table_element][$value]);
-            }
-              // Must be in the database so make an entry to keep track.
-            else {
-              $db_remove_mime_types[$table_element][$value] = $value;
-            }
+      // Otherwise, the removal button was hit.
+      if (end($triggering_element['#parents']) == 'remove_selected') {
+        foreach (array_filter($form_state->getValue([$triggering_fieldset, 'wrapper', 'mimetype_table'])) as $value) {
+          if (NestedArray::getValue($mimes_to_add, [$triggering_fieldset, $value])) {
+            unset($mimes_to_add[$triggering_fieldset][$value]);
+          }
+          else {
+            $db_deletions[$triggering_fieldset][$value] = $value;
           }
         }
       }
     }
+
+    $form['#attached']['library'][] = 'islandora_binary_object/islandora-binary-object';
+    $form['#theme'] = 'system_config_form';
     $form['#tree'] = TRUE;
     $form['thumbnail_associations'] = ['#type' => 'vertical_tabs'];
     // Retrieve all existing associations and render up a fieldset for them.
     $associated_thumbs = islandora_binary_object_retrieve_associations();
     foreach ($associated_thumbs as $association) {
       $thumb = file_load($association['fid']);
-      $fieldset_name = \Drupal\Component\Utility\Html::getId($thumb->filename);
+      $fieldset_name = \Drupal\Component\Utility\Html::getId($thumb->getFilename());
       $wrapper_name = "$fieldset_name-mime-type-add";
       $form[$fieldset_name] = [
         '#type' => 'fieldset',
-        '#title' => $thumb->filename,
+        '#title' => $thumb->getFilename(),
         '#collapsed' => FALSE,
         '#collapsible' => TRUE,
         '#group' => 'thumbnail_associations',
@@ -121,7 +91,7 @@ class IslandoraBinaryObjectAdmin extends FormBase {
       $form[$fieldset_name]['wrapper']['thumbnail'] = [
         '#theme' => 'image_style',
         '#style_name' => 'medium',
-        '#path' => $thumb->uri,
+        '#uri' => $thumb->getFileUri(),
       ];
 
       // See if there are already existing MIME types associated with this file.
@@ -133,20 +103,18 @@ class IslandoraBinaryObjectAdmin extends FormBase {
         }
         // Check if the association has any MIME types removed that have yet
         // to be updated in the form state.
-        if ($db_remove_mime_types) {
-          if (isset($db_remove_mime_types[$fieldset_name])) {
-            foreach ($db_remove_mime_types[$fieldset_name] as $db_mime_type) {
+        if ($db_deletions) {
+          if (isset($db_deletions[$fieldset_name])) {
+            foreach ($db_deletions[$fieldset_name] as $db_mime_type) {
               unset($rows[$db_mime_type]);
             }
           }
         }
       }
       // Lastly check the form state to see if there anymore to add.
-      if ($ajax_add_mime_types) {
-        if (isset($ajax_add_mime_types[$fieldset_name])) {
-          foreach ($ajax_add_mime_types[$fieldset_name] as $mime_type) {
-            $rows[$mime_type] = [$mime_type];
-          }
+      if (isset($mimes_to_add[$fieldset_name])) {
+        foreach ($mimes_to_add[$fieldset_name] as $mime) {
+          $rows[$mime] = [$mime];
         }
       }
       $form[$fieldset_name]['wrapper']['mimetype_table'] = [
@@ -162,7 +130,7 @@ class IslandoraBinaryObjectAdmin extends FormBase {
         '#value' => t('Remove Selected'),
         '#name' => "$fieldset_name-remove",
         '#ajax' => [
-          'callback' => 'islandora_binary_object_fieldset_ajax',
+          'callback' => '::fieldsetAjax',
           'wrapper' => $wrapper_name,
         ],
       ];
@@ -177,7 +145,7 @@ class IslandoraBinaryObjectAdmin extends FormBase {
         '#value' => t('Add'),
         '#name' => "$fieldset_name-add",
         '#ajax' => [
-          'callback' => 'islandora_binary_object_fieldset_ajax',
+          'callback' => '::fieldsetAjax',
           'wrapper' => $wrapper_name,
         ],
       ];
@@ -218,37 +186,37 @@ class IslandoraBinaryObjectAdmin extends FormBase {
     ];
     // Store any existing AJAX MIME types back into the form state to keep
     // persistence.
-    if (!empty($ajax_add_mime_types)) {
-      $form_state->set(['islandora_binary_object', 'ajax_add'], $ajax_add_mime_types);
-    }
+    $form_state->set(['islandora_binary_object', 'ajax_add'], $mimes_to_add);
     // Similarily, store any removed DB MIME types for storage.
-    if (!empty($db_remove_mime_types)) {
-      $form_state->set(['islandora_binary_object', 'db_remove'], $db_remove_mime_types);
-    }
+    $form_state->set(['islandora_binary_object', 'db_remove'], $db_deletions);
     return $form;
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function validateForm(array &$form, \Drupal\Core\Form\FormStateInterface $form_state) {
     // If a MIME Type is being added first see if it exists in the database or
-  // in the form state to preserve the unique mapping.
-    if (end($form_state->getTriggeringElement()) == 'add_mimetype_button') {
+    // in the form state to preserve the unique mapping.
+    $triggering_element = $form_state->getTriggeringElement();
+    $wrapper = NestedArray::getValue($form, array_slice($triggering_element['#parents'], 0, 2));
+    if (end($triggering_element['#parents']) == 'add_mimetype_button') {
       module_load_include('inc', 'islandora_binary_object', 'includes/db');
       $mime_errored = FALSE;
-      $thumb_fieldset = $form_state->getTriggeringElement();
+      $thumb_fieldset = reset($triggering_element['#parents']);
       $add_mime = $form_state->getValue([
         $thumb_fieldset,
         'wrapper',
         'add_mimetype',
       ]);
+      // Hang onto this; it'll be where the errors go.
       if (!empty($add_mime)) {
         // Check the form state first.
-        if (!$form_state->get([
-          'islandora_binary_object'
-          ]) && !$form_state->get(['islandora_binary_object', 'ajax_add'])) {
+        if ($form_state->get(['islandora_binary_object', 'ajax_add'])) {
           foreach ($form_state->get(['islandora_binary_object', 'ajax_add']) as $thumb => $value) {
             foreach ($value as $fstate_mime) {
               if ($add_mime == $fstate_mime) {
-                $form_state->setError($form[$thumb_fieldset]['wrapper']['add_mimetype'], t('The @mime MIME type has already been associated to a thumbnail.', [
+                $form_state->setError($wrapper, $this->t('The @mime MIME type has already been associated to a thumbnail.', [
                   '@mime' => $add_mime
                   ]));
                 $mime_errored = TRUE;
@@ -259,10 +227,7 @@ class IslandoraBinaryObjectAdmin extends FormBase {
         }
         if (!$mime_errored) {
           $pending_removal = FALSE;
-          if (!$form_state->get(['islandora_binary_object']) && !$form_state->get([
-            'islandora_binary_object',
-            'db_remove',
-          ])) {
+          if ($form_state->get(['islandora_binary_object', 'db_remove'])) {
             foreach ($form_state->get(['islandora_binary_object', 'db_remove']) as $thumb => $value) {
               foreach ($value as $db_mime) {
                 if ($add_mime == $db_mime) {
@@ -274,79 +239,88 @@ class IslandoraBinaryObjectAdmin extends FormBase {
           }
           $db_mime_exists = islandora_binary_object_check_mime_type($add_mime);
           if ($db_mime_exists && !$pending_removal) {
-            $form_state->setError($form[$thumb_fieldset]['wrapper']['add_mimetype'], t('The @mime MIME type has already been associated to a thumbnail.', [
-              '@mime' => $add_mime
+            $form_state->setError($wrapper, $this->t('The @mime MIME type has already been associated to a thumbnail.', [
+              '@mime' => $add_mime,
               ]));
           }
         }
       }
       else {
-        $form_state->setError($form[$thumb_fieldset]['wrapper']['add_mimetype'], t('Please enter a non-empty value for a MIME type.'));
+        $form_state->setError($wrapper, $this->t('Please enter a non-empty value for a MIME type.'));
       }
     }
-    elseif (end($form_state->getTriggeringElement()) == 'remove_selected') {
-      $thumb_fieldset = $form_state->getTriggeringElement();
+    elseif (end($triggering_element['#parents']) == 'remove_selected') {
       if (count(array_filter($form_state->getValue([
-        $thumb_fieldset,
+        reset($triggering_element['#parents']),
         'wrapper',
         'mimetype_table',
       ]))) == 0) {
-        $form_state->setError($form[$thumb_fieldset]['wrapper']['mimetype_table'], t('Need to select at least one MIME type to remove.'));
+        $form_state->setError($wrapper, $this->t('Need to select at least one MIME type to remove.'));
       }
     }
   }
 
-  public function submitForm(array &$form, \Drupal\Core\Form\FormStateInterface $form_state) {
+  /**
+   * {@inheritdoc}
+   */
+  public function submitForm(array &$form, FormStateInterface $form_state) {
     // See if the user has uploaded a new file and if so create a new entry in
-  // the thumbnails table for it.
-    if ($form_state->getTriggeringElement() == 'islandora-binary-object-submit') {
-      if ($form_state->getValue(['upload_fieldset', 'upload']) !== 0) {
+    // the thumbnails table for it.
+    $triggering_element = $form_state->getTriggeringElement();
+    if ($triggering_element['#name'] == 'islandora-binary-object-submit') {
+      if (!empty($form_state->getValue(['upload_fieldset', 'upload']))) {
         module_load_include('inc', 'islandora_binary_object', 'includes/db');
-        $file = file_load($form_state->getValue(['upload_fieldset', 'upload']));
-        $file->status = FILE_STATUS_PERMANENT;
+        $file = file_load(reset($form_state->getValue(['upload_fieldset', 'upload'])));
+        $file->setPermanent();
         file_move($file, 'public://islandora_binary_object_thumbnails');
-        islandora_binary_object_create_association($file->fid);
+        islandora_binary_object_create_association($file->get('fid')->value);
       }
 
-      if (!$form_state->get(['islandora_binary_object'])) {
-        // First let's deal with the database removals.
-        if (!$form_state->get(['islandora_binary_object', 'db_remove'])) {
-          $remove_db = [];
-          foreach ($form_state->get(['islandora_binary_object', 'db_remove']) as $value) {
-            foreach ($value as $mime_type) {
-              $remove_db[] = $mime_type;
-            }
+      // First let's deal with the database removals.
+      if ($form_state->get(['islandora_binary_object', 'db_remove'])) {
+        $remove_db = [];
+        foreach ($form_state->get(['islandora_binary_object', 'db_remove']) as $value) {
+          foreach ($value as $mime_type) {
+            $remove_db[] = $mime_type;
           }
-          db_delete('islandora_binary_object_thumbnail_mappings')
-            ->condition('mimetype', $remove_db)
-            ->execute();
         }
-        // Now let's add everything.
-        if (!$form_state->get(['islandora_binary_object', 'ajax_add'])) {
-          foreach ($form_state->get(['islandora_binary_object', 'ajax_add']) as $association => $value) {
-            $association_id = $form_state->getValue([$association, 'association_id']);
-            $insert = db_insert('islandora_binary_object_thumbnail_mappings')
-              ->fields(['id', 'mimetype']);
-            foreach ($value as $mime_type) {
-              $insert->values([
-                'id' => $association_id,
-                'mimetype' => $mime_type,
-              ]);
-            }
-            $insert->execute();
+        db_delete('islandora_binary_object_thumbnail_mappings')
+          ->condition('mimetype', $remove_db)
+          ->execute();
+      }
+      // Now let's add everything.
+      if ($form_state->get(['islandora_binary_object', 'ajax_add'])) {
+        foreach ($form_state->get(['islandora_binary_object', 'ajax_add']) as $association => $value) {
+          $association_id = $form_state->getValue([$association, 'association_id']);
+          $insert = db_insert('islandora_binary_object_thumbnail_mappings')
+            ->fields(['id', 'mimetype']);
+          foreach ($value as $mime_type) {
+            $insert->values([
+              'id' => $association_id,
+              'mimetype' => $mime_type,
+            ]);
           }
+          $insert->execute();
         }
       }
       drupal_set_message(t('The associations have been updated.'));
     }
-      // Deleting an association has been pressed.
+    // Deleting an association has been pressed.
     else {
-      // Determine which delete button was pressed.
-      $table_element = $form_state->getTriggeringElement();
-      $association_id = $form[$table_element]['association_id']['#value'];
-      $file_id = $form[$table_element]['fid']['#value'];
-      $form_state->set(['redirect'], "admin/islandora/tools/binary-object-storage/delete-association/$association_id/$file_id");
+      $immediate_parent = reset($triggering_element['#parents']);
+      $form_state->setRedirect('islandora_binary_object.delete_association_form', [
+        'association_id' => $form_state->getValue([$immediate_parent, 'association_id']),
+        'file_id' => $form_state->getValue([$immediate_parent, 'fid']),
+      ]);
     }
+  }
+
+  /**
+   * AJAX callback for resetting fieldsets after mimetype addition/removal.
+   */
+  public function fieldsetAjax(array $form, FormStateInterface $form_state) {
+    $triggering_element = $form_state->getTriggeringElement();
+    return NestedArray::getValue($form, array_slice($triggering_element['#parents'], 0, 2));
   }
 
 }

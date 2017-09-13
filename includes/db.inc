@@ -47,7 +47,7 @@ function islandora_binary_object_create_association($fid) {
     ->execute();
   $file = file_load($fid);
   drupal_set_message(t('Created a new association for @filename.', array(
-    '@filename' => $file->filename,
+    '@filename' => $file->get('filename')->value,
   )));
 }
 
@@ -61,11 +61,12 @@ function islandora_binary_object_create_association($fid) {
  *   TRUE if the MIME type exists, FALSE otherwise.
  */
 function islandora_binary_object_check_mime_type($mime_type) {
-  return db_select('islandora_binary_object_thumbnail_mappings', 'i')
+  $select = db_select('islandora_binary_object_thumbnail_mappings', 'i')
     ->fields('i')
     ->condition('mimetype', $mime_type)
     ->execute()
-    ->rowCount();
+    ->fetchField();
+  return $select !== FALSE;
 }
 
 /**
