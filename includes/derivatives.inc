@@ -66,7 +66,7 @@ function islandora_binary_object_create_thumbnail(AbstractObject $object, $force
         'messages' => array(
           array(
             'message' => $message,
-            'type' => 'watchdog',
+            'type' => 'log',
             'severity' => RfcLogLevel::ERROR,
           ),
         ),
