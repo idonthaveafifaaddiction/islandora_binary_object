@@ -42,33 +42,33 @@ class IslandoraBinaryObjectUploadForm extends FormBase {
           'file_validate_size' => [$upload_size * 1024 * 1024],
         ],
       ],
-      'supply_thumbnail' => array(
+      'supply_thumbnail' => [
         '#type' => 'checkbox',
         '#title' => $this->t('Upload Thumbnail'),
-      ),
-      'thumbnail_section' => array(
-        'thumbnail_file' => array(
+      ],
+      'thumbnail_section' => [
+        'thumbnail_file' => [
           '#title' => $this->t('Thumbnail File'),
           '#type' => 'managed_file',
-          '#description' => $this->t('Select a file to upload.<br/>Files must be less than <strong>@size MB.</strong><br/>Allowed file types: <strong>@ext.</strong>', array('@size' => $upload_size, '@ext' => $thumbnail_extensions[0])),
+          '#description' => $this->t('Select a file to upload.<br/>Files must be less than <strong>@size MB.</strong><br/>Allowed file types: <strong>@ext.</strong>', ['@size' => $upload_size, '@ext' => $thumbnail_extensions[0]]),
           '#default_value' => $form_state->getValue('thumbnail_file') ? $form_state->getValue('thumbnail_file') : NULL,
           '#upload_location' => 'temporary://',
-          '#upload_validators' => array(
+          '#upload_validators' => [
             'file_validate_extensions' => $thumbnail_extensions,
             // Assume its specified in MB.
             'file_validate_size' => [$upload_size * 1024 * 1024],
-          ),
-        ),
-        'scale_thumbnail' => array(
+          ],
+        ],
+        'scale_thumbnail' => [
           '#type' => 'checkbox',
           '#title' => $this->t('Scale Thumbnail'),
           '#attributes' => ['checked' => 'checked'],
-        ),
+        ],
         '#type' => 'item',
-        '#states' => array(
+        '#states' => [
           'visible' => ['#edit-supply-thumbnail' => ['checked' => TRUE]],
-        ),
-      ),
+        ],
+      ],
     ];
   }
 
