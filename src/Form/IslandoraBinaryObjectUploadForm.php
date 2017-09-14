@@ -78,7 +78,7 @@ class IslandoraBinaryObjectUploadForm extends FormBase {
   public function validateForm(array &$form, FormStateInterface $form_state) {
     if ($form_state->getValue('supply_thumbnail') &&
       !$form_state->getValue('thumbnail_file')) {
-      form_set_error('thumbnail_file', $this->t('If you select "Upload Thumbnail" please supply a file.'));
+      $form_state->setErrorByName('thumbnail_file', $this->t('If you select "Upload Thumbnail" please supply a file.'));
     }
   }
 
