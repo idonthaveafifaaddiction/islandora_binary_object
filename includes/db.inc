@@ -64,8 +64,9 @@ function islandora_binary_object_check_mime_type($mime_type) {
   return db_select('islandora_binary_object_thumbnail_mappings', 'i')
     ->fields('i')
     ->condition('mimetype', $mime_type)
+    ->countQuery()
     ->execute()
-    ->rowCount();
+    ->fetchField();
 }
 
 /**
