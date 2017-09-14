@@ -1,20 +1,38 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\islandora_binary_object\Form\IslandoraBinaryObjectDeleteAssociationForm.
- */
-
 namespace Drupal\islandora_binary_object\Form;
 
 use Drupal\Core\Form\ConfirmFormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
+use Drupal\Core\Entity\EntityStorageInterface;
 
+use Symfony\Component\DependencyInjection\ContainerInterface;
+
+/**
+ * Confirmation form for deleting thumbnail associations.
+ */
 class IslandoraBinaryObjectDeleteAssociationForm extends ConfirmFormBase {
 
+  protected $fileEntityStorage;
   protected $associationId;
   protected $fileId;
+
+  /**
+   * Constructor.
+   */
+  public function __construct(EntityStorageInterface $file_entity_storage) {
+    $this->fileEntityStorage = $file_entity_storage;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container) {
+    return new static(
+      $container->get('entity_type.manager')->getStorage('file')
+    );
+  }
 
   /**
    * {@inheritdoc}
@@ -34,7 +52,7 @@ class IslandoraBinaryObjectDeleteAssociationForm extends ConfirmFormBase {
    * {@inheritdoc}
    */
   public function getCancelUrl() {
-    return new Url('islandora_binary_object.admin');
+    return Url::fromRoute('islandora_binary_object.admin');
   }
 
   /**
@@ -61,9 +79,12 @@ class IslandoraBinaryObjectDeleteAssociationForm extends ConfirmFormBase {
   /**
    * {@inheritdoc}
    *
+   * @param array $form
+   *   The form structure.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   The form state.
    * @param int $association_id
    *   The association ID to delete.
-   *
    * @param int $file_id
    *   The file ID to delete with the association.
    */
@@ -80,14 +101,13 @@ class IslandoraBinaryObjectDeleteAssociationForm extends ConfirmFormBase {
     module_load_include('inc', 'islandora_binary_object', 'includes/db');
     islandora_binary_object_delete_association($this->associationId);
 
-    $file = file_load($this->fileId);
+    $file = $this->fileEntityStorage->load($this->fileId);
     $file_name = $file->getFilename();
-    file_delete($this->fileId);
+    $file->delete();
     drupal_set_message(t('The association for @filename has been deleted!', [
       '@filename' => $file_name,
-      ]));
+    ]));
     $form_state->setRedirect("islandora_binary_object.admin");
   }
 
 }
-?>

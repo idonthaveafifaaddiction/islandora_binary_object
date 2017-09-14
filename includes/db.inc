@@ -5,6 +5,8 @@
  * Holds database utility functions for use in the admin page.
  */
 
+use Drupal\file\Entity\File;
+
 /**
  * Retrieves all associations for rendering in the admin UI.
  *
@@ -13,7 +15,7 @@
  */
 function islandora_binary_object_retrieve_associations() {
   return db_select('islandora_binary_object_thumbnail_associations', 'i')
-    ->fields('i', array('id', 'fid'))
+    ->fields('i', ['id', 'fid'])
     ->execute()
     ->fetchAllAssoc('id', PDO::FETCH_ASSOC);
 }
@@ -26,11 +28,12 @@ function islandora_binary_object_retrieve_associations() {
  */
 function islandora_binary_object_retrieve_mime_types($association_id) {
   return db_select('islandora_binary_object_thumbnail_mappings', 'i')
-    ->fields('i', array('id', 'mimetype'))
+    ->fields('i', ['id', 'mimetype'])
     ->condition('id', $association_id)
     ->execute()
     ->fetchAllAssoc('mimetype', PDO::FETCH_ASSOC);
 }
+
 /**
  * Creates a new association for an uploaded file.
  *
@@ -39,16 +42,14 @@ function islandora_binary_object_retrieve_mime_types($association_id) {
  */
 function islandora_binary_object_create_association($fid) {
   db_insert('islandora_binary_object_thumbnail_associations')
-    ->fields(
-      array(
-        'fid' => $fid,
-      )
-    )
+    ->fields([
+      'fid' => $fid,
+    ])
     ->execute();
-  $file = file_load($fid);
-  drupal_set_message(t('Created a new association for @filename.', array(
+  $file = File::load($fid);
+  drupal_set_message(t('Created a new association for @filename.', [
     '@filename' => $file->getFilename(),
-  )));
+  ]));
 }
 
 /**
@@ -81,7 +82,7 @@ function islandora_binary_object_check_mime_type($mime_type) {
 function islandora_binary_object_retrieve_file_id_by_association($mime_type) {
   $query = db_select('islandora_binary_object_thumbnail_mappings', 'map');
   $query->join('islandora_binary_object_thumbnail_associations', 'assoc', 'map.id = assoc.id');
-  return $query->fields('assoc', array('fid'))
+  return $query->fields('assoc', ['fid'])
     ->condition('map.mimetype', $mime_type)
     ->execute()
     ->fetchField();
