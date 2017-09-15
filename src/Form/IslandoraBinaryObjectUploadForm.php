@@ -110,7 +110,7 @@ class IslandoraBinaryObjectUploadForm extends FormBase {
    * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
-    module_load_include('inc', 'islandora', 'includes/utilities');
+    $form_state->loadInclude('islandora', 'inc', 'includes/utilities');
     $object = islandora_ingest_form_get_object($form_state);
 
     if ($form_state->getValue('file')) {
