@@ -119,14 +119,14 @@ class IslandoraBinaryObjectUploadForm extends FormBase {
         $object['OBJ'] :
         $datastream = $object->constructDatastream('OBJ', 'M');
 
-      $datastream->setContentFromFile($file->uri, FALSE);
+      $datastream->setContentFromFile($file->getFileUri(), FALSE);
 
-      if ($datastream->label != $file->filename) {
-        $datastream->label = $file->filename;
+      if ($datastream->label != $file->getFilename()) {
+        $datastream->label = $file->getFilename();
       }
 
-      if ($datastream->mimetype != $file->filemime) {
-        $datastream->mimetype = $file->filemime;
+      if ($datastream->mimetype != $file->getMimeType()) {
+        $datastream->mimetype = $file->getMimeType();
       }
 
       if (!isset($object['OBJ'])) {
@@ -148,14 +148,14 @@ class IslandoraBinaryObjectUploadForm extends FormBase {
       else {
         $tn = $object['TN'];
       }
-      $tn->setContentFromFile($thumbnail_file->uri, FALSE);
+      $tn->setContentFromFile($thumbnail_file->getFileUri(), FALSE);
 
-      if ($tn->label != $thumbnail_file->filename) {
-        $tn->label = $thumbnail_file->filename;
+      if ($tn->label != $thumbnail_file->getFilename()) {
+        $tn->label = $thumbnail_file->getFilename();
       }
 
-      if ($tn->mimetype != $thumbnail_file->filemime) {
-        $tn->mimetype = $thumbnail_file->filemime;
+      if ($tn->mimetype != $thumbnail_file->getMimeType()) {
+        $tn->mimetype = $thumbnail_file->getMimeType();
       }
     }
   }
