@@ -161,4 +161,3 @@ class IslandoraBinaryObjectUploadForm extends FormBase {
   }
 
 }
-?>
