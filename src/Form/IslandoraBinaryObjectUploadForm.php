@@ -9,8 +9,28 @@ namespace Drupal\islandora_binary_object\Form;
 
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Entity\EntityStorageInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class IslandoraBinaryObjectUploadForm extends FormBase {
+
+  protected $fileEntityStorage;
+
+  /**
+   * Constructor.
+   */
+  public function __construct(EntityStorageInterface $file_entity_storage) {
+    $this->fileEntityStorage = $file_entity_storage;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container) {
+    return new static(
+      $container->get('entity_type.manager')->getStorage('file')
+    );
+  }
 
   /**
    * {@inheritdoc}
@@ -94,7 +114,7 @@ class IslandoraBinaryObjectUploadForm extends FormBase {
     $object = islandora_ingest_form_get_object($form_state);
 
     if ($form_state->getValue('file')) {
-      $file = file_load($form_state->getValue('file'));
+      $file = $this->fileEntityStorage->load(reset($form_state->getValue('file')));
       $datastream = isset($object['OBJ']) ?
         $object['OBJ'] :
         $datastream = $object->constructDatastream('OBJ', 'M');
@@ -115,7 +135,7 @@ class IslandoraBinaryObjectUploadForm extends FormBase {
     }
 
     if ($form_state->getValue('supply_thumbnail')) {
-      $thumbnail_file = file_load($form_state->getValue('thumbnail_file'));
+      $thumbnail_file = $this->fileEntityStorage->load(reset($form_state->getValue('thumbnail_file')));
 
       if ($form_state->getValue('scale_thumbnail')) {
         islandora_scale_thumbnail($thumbnail_file, 200, 200);
