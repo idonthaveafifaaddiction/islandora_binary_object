@@ -95,28 +95,26 @@ class IslandoraBinaryObjectAdmin extends FormBase {
     $associated_thumbs = islandora_binary_object_retrieve_associations();
     foreach ($associated_thumbs as $association) {
       $thumb = $this->fileEntityStorage->load($association['fid']);
-      $fieldset_name = Html::getId($thumb->getFilename());
-      $wrapper_name = "$fieldset_name-mime-type-add";
-      $form[$fieldset_name] = [
-        '#type' => 'fieldset',
+      $tab_name = Html::getId($thumb->getFilename());
+      $wrapper_name = "$tab_name-mime-type-add";
+      $form[$tab_name] = [
+        '#type' => 'details',
         '#title' => $thumb->getFilename(),
-        '#collapsed' => FALSE,
-        '#collapsible' => TRUE,
         '#group' => 'thumbnail_associations',
         'wrapper' => [
           '#prefix' => '<div id="' . $wrapper_name . '" class="islandora-binary-object-admin">',
           '#suffix' => '</div>',
         ],
       ];
-      $form[$fieldset_name]['fid'] = [
+      $form[$tab_name]['fid'] = [
         '#type' => 'value',
         '#value' => $association['fid'],
       ];
-      $form[$fieldset_name]['association_id'] = [
+      $form[$tab_name]['association_id'] = [
         '#type' => 'value',
         '#value' => $association['id'],
       ];
-      $form[$fieldset_name]['wrapper']['thumbnail'] = [
+      $form[$tab_name]['wrapper']['thumbnail'] = [
         '#theme' => 'image_style',
         '#style_name' => 'medium',
         '#uri' => $thumb->getFileUri(),
@@ -132,20 +130,20 @@ class IslandoraBinaryObjectAdmin extends FormBase {
         // Check if the association has any MIME types removed that have yet
         // to be updated in the form state.
         if ($db_deletions) {
-          if (isset($db_deletions[$fieldset_name])) {
-            foreach ($db_deletions[$fieldset_name] as $db_mime_type) {
+          if (isset($db_deletions[$tab_name])) {
+            foreach ($db_deletions[$tab_name] as $db_mime_type) {
               unset($rows[$db_mime_type]);
             }
           }
         }
       }
       // Lastly check the form state to see if there anymore to add.
-      if (isset($mimes_to_add[$fieldset_name])) {
-        foreach ($mimes_to_add[$fieldset_name] as $mime) {
+      if (isset($mimes_to_add[$tab_name])) {
+        foreach ($mimes_to_add[$tab_name] as $mime) {
           $rows[$mime] = [$mime];
         }
       }
-      $form[$fieldset_name]['wrapper']['mimetype_table'] = [
+      $form[$tab_name]['wrapper']['mimetype_table'] = [
         '#type' => 'tableselect',
         '#header' => [
           $this->t('MIME type'),
@@ -153,33 +151,33 @@ class IslandoraBinaryObjectAdmin extends FormBase {
         '#options' => $rows,
         '#empty' => $this->t('No MIME types currently associated.'),
       ];
-      $form[$fieldset_name]['wrapper']['remove_selected'] = [
+      $form[$tab_name]['wrapper']['remove_selected'] = [
         '#type' => 'button',
         '#value' => $this->t('Remove Selected'),
-        '#name' => "$fieldset_name-remove",
+        '#name' => "$tab_name-remove",
         '#ajax' => [
           'callback' => '::fieldsetAjax',
           'wrapper' => $wrapper_name,
         ],
       ];
 
-      $form[$fieldset_name]['wrapper']['add_mimetype'] = [
+      $form[$tab_name]['wrapper']['add_mimetype'] = [
         '#type' => 'textfield',
         '#title' => $this->t('MIME type'),
         '#autocomplete_path' => 'islandora/autocomplete/mime-types',
       ];
-      $form[$fieldset_name]['wrapper']['add_mimetype_button'] = [
+      $form[$tab_name]['wrapper']['add_mimetype_button'] = [
         '#type' => 'button',
         '#value' => $this->t('Add'),
-        '#name' => "$fieldset_name-add",
+        '#name' => "$tab_name-add",
         '#ajax' => [
           'callback' => '::fieldsetAjax',
           'wrapper' => $wrapper_name,
         ],
       ];
-      $form[$fieldset_name]['wrapper']['remove_association'] = [
+      $form[$tab_name]['wrapper']['remove_association'] = [
         '#type' => 'submit',
-        '#name' => "$fieldset_name-delete-association",
+        '#name' => "$tab_name-delete-association",
         '#value' => $this->t('Delete Association'),
         '#attributes' => [
           'class' => [
