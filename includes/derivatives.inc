@@ -5,6 +5,8 @@
  * Function deriving the default thumbnail for storage of blobs.
  */
 
+use Drupal\Core\Logger\RfcLogLevel;
+
 /**
  * Sets the default thumbnail when no other thumbnail has been set.
  *
@@ -64,8 +66,8 @@ function islandora_binary_object_create_thumbnail(AbstractObject $object, $force
         'messages' => array(
           array(
             'message' => $message,
-            'type' => 'watchdog',
-            'severity' => WATCHDOG_ERROR,
+            'type' => 'log',
+            'severity' => RfcLogLevel::ERROR,
           ),
         ),
       );
