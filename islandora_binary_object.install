@@ -13,52 +13,51 @@ function islandora_binary_object_install() {
   islandora_install_solution_pack('islandora_binary_object');
   $directory = 'public://islandora_binary_object_thumbnails';
   file_prepare_directory($directory, FILE_CREATE_DIRECTORY);
-
 }
 
 /**
  * Implements hook_schema().
  */
 function islandora_binary_object_schema() {
-  $schema = array();
-  $schema['islandora_binary_object_thumbnail_associations'] = array(
+  $schema = [];
+  $schema['islandora_binary_object_thumbnail_associations'] = [
     'description' => 'Stores fids and the association id they are associated with',
-    'fields' => array(
-      'id' => array(
+    'fields' => [
+      'id' => [
         'description' => 'The unique association id',
         'type' => 'serial',
         'length' => 11,
         'not null' => TRUE,
-      ),
-      'fid' => array(
+      ],
+      'fid' => [
         'description' => 'The Drupal file id that the association is referenced with',
         'type' => 'int',
         'length' => 11,
         'not null' => TRUE,
-      ),
-    ),
-    'primary key' => array('id'),
-  );
-  $schema['islandora_binary_object_thumbnail_mappings'] = array(
+      ],
+    ],
+    'primary key' => ['id'],
+  ];
+  $schema['islandora_binary_object_thumbnail_mappings'] = [
     'description' => 'Maps MIME types to association ids',
-    'fields' => array(
-      'id' => array(
+    'fields' => [
+      'id' => [
         'description' => 'The unique association id',
         'type' => 'int',
         'length' => 11,
         'not null' => TRUE,
-      ),
-      'mimetype' => array(
+      ],
+      'mimetype' => [
         'description' => 'The MIME type of the file to associate with',
         'type' => 'varchar',
         'length' => 255,
         'not null' => TRUE,
-      ),
-    ),
-    'unique keys' => array(
-      'mimetype' => array(array('mimetype', 191)),
-    ),
-  );
+      ],
+    ],
+    'unique keys' => [
+      'mimetype' => [['mimetype', 191]],
+    ],
+  ];
   return $schema;
 }
 
