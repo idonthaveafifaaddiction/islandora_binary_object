@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file
  * Handles the creation and display of binary_object Islandora objects.
@@ -8,14 +9,14 @@
  * Implements hook_theme().
  */
 function islandora_binary_object_theme($existing, $type, $theme, $path) {
-  return array(
-    'islandora_binary_object' => array(
+  return [
+    'islandora_binary_object' => [
       'file' => 'theme/theme.inc',
       'template' => 'islandora-binary-object',
       'pattern' => 'islandora_binary_object__',
-      'variables' => array('islandora_object' => NULL),
-    ),
-  );
+      'variables' => ['islandora_object' => NULL],
+    ],
+  ];
 }
 
 /**
@@ -53,59 +54,58 @@ function islandora_binary_object_islandora_required_objects(IslandoraTuque $conn
   $datastream->mimetype = 'image/png';
   $datastream->setContentFromFile("$islandora_path/images/folder.png", FALSE);
   $binary_object_collection->ingestDatastream($datastream);
-  return array(
-    'islandora_binary_object' => array(
+  return [
+    'islandora_binary_object' => [
       'title' => 'Islandora Binary Object',
-      'objects' => array(
+      'objects' => [
         $binary_object_content_model,
         $binary_object_collection,
-      ),
-    ),
-  );
+      ],
+    ],
+  ];
 }
 
 /**
  * Implements hook_xml_form_builder_form_associations().
  */
 function islandora_binary_object_xml_form_builder_form_associations() {
-  return array(
-    'islandora_binary_object_mods_form' => array(
+  return [
+    'islandora_binary_object_mods_form' => [
       'content_model' => 'islandora:binaryObjectCModel',
       'form_name' => 'Binary Object MODS form',
       'dsid' => 'MODS',
-      'title_field' => array('titleInfo', 'title'),
+      'title_field' => ['titleInfo', 'title'],
       'transform' => 'mods_to_dc.xsl',
       'template' => FALSE,
-    ),
-  );
+    ],
+  ];
 }
-
 
 /**
  * Implements hook_xml_form_builder_forms().
  */
 function islandora_binary_object_xml_form_builder_forms() {
   $module_path = drupal_get_path('module', 'islandora_binary_object');
-  return array(
-    'Binary Object MODS form' => array(
+  return [
+    'Binary Object MODS form' => [
       'form_file' => "$module_path/xml/islandora_binary_object_form_mods.xml",
-    ),
-  );
+    ],
+  ];
 }
 
 /**
  * Implements hook_islandora_ingest_steps().
  */
 function islandora_binary_object_islandora_binaryObjectCModel_islandora_ingest_steps() {
-  return array(
-    'islandora_binary_object' => array(
+  return [
+    'islandora_binary_object' => [
       'weight' => 10,
       'type' => 'form',
       'form_class' => 'Drupal\islandora_binary_object\Form\IslandoraBinaryObjectUploadForm',
       'module' => 'islandora_binary_object',
       'file' => 'includes/binary_object_upload.form.inc',
-    ),
-  );
+    ],
+  ];
 }
 
 /**
@@ -128,15 +128,15 @@ function islandora_binary_object_islandora_binaryObjectCModel_islandora_view_obj
  * Implements hook_islandora_CMODEL_PID_derivative().
  */
 function islandora_binary_object_islandora_binaryObjectCModel_islandora_derivative() {
-  return array(
-    array(
+  return [
+    [
       'source_dsid' => NULL,
       'destination_dsid' => 'TN',
       'weight' => '0',
-      'function' => array(
+      'function' => [
         'islandora_binary_object_create_thumbnail',
-      ),
+      ],
       'file' => drupal_get_path('module', 'islandora_binary_object') . '/includes/derivatives.inc',
-    ),
-  );
+    ],
+  ];
 }

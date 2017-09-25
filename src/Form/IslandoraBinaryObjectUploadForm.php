@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\islandora_binary_object\Form\IslandoraBinaryObjectUploadForm.
- */
-
 namespace Drupal\islandora_binary_object\Form;
 
 use Drupal\Core\Form\FormBase;
@@ -12,6 +7,9 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
+/**
+ * Upload form when ingesting binary objects.
+ */
 class IslandoraBinaryObjectUploadForm extends FormBase {
 
   protected $fileEntityStorage;

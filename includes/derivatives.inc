@@ -48,29 +48,29 @@ function islandora_binary_object_create_thumbnail(AbstractObject $object, $force
       if ($ingest) {
         $object->ingestDatastream($ds);
       }
-      return array(
+      return [
         'success' => TRUE,
-        'messages' => array(
-          array(
+        'messages' => [
+          [
             'message' => t('The TN datastream was added successfully for @pid!'),
-            'message_sub' => array('@pid' => $object->id),
+            'message_sub' => ['@pid' => $object->id],
             'type' => 'dsm',
-          ),
-        ),
-      );
+          ],
+        ],
+      ];
     }
     catch (exception $e) {
       $message = $e->getMessage();
-      return array(
+      return [
         'success' => FALSE,
-        'messages' => array(
-          array(
+        'messages' => [
+          [
             'message' => $message,
             'type' => 'log',
             'severity' => RfcLogLevel::ERROR,
-          ),
-        ),
-      );
+          ],
+        ],
+      ];
     }
   }
 }

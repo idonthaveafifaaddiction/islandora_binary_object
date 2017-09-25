@@ -98,7 +98,7 @@ class IslandoraBinaryObjectDeleteAssociationForm extends ConfirmFormBase {
    * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
-    module_load_include('inc', 'islandora_binary_object', 'includes/db');
+    $form_state->loadInclude('islandora_binary_object', 'inc', 'includes/db');
     islandora_binary_object_delete_association($this->associationId);
 
     $file = $this->fileEntityStorage->load($this->fileId);

@@ -44,7 +44,7 @@ class IslandoraBinaryObjectAdmin extends FormBase {
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
-    module_load_include('inc', 'islandora_binary_object', 'includes/db');
+    $form_state->loadInclude('islandora_binary_object', 'inc', 'includes/db');
 
     $mimes_to_add = $form_state->get(['islandora_binary_object', 'ajax_add']);
     $db_deletions = $form_state->get(['islandora_binary_object', 'db_remove']);
@@ -222,12 +222,12 @@ class IslandoraBinaryObjectAdmin extends FormBase {
    * {@inheritdoc}
    */
   public function validateForm(array &$form, FormStateInterface $form_state) {
+    $form_state->loadInclude('islandora_binary_object', 'inc', 'includes/db');
     // If a MIME Type is being added first see if it exists in the database or
     // in the form state to preserve the unique mapping.
     $triggering_element = $form_state->getTriggeringElement();
     $wrapper = NestedArray::getValue($form, array_slice($triggering_element['#parents'], 0, 2));
     if (end($triggering_element['#parents']) == 'add_mimetype_button') {
-      module_load_include('inc', 'islandora_binary_object', 'includes/db');
       $mime_errored = FALSE;
       $thumb_fieldset = reset($triggering_element['#parents']);
       $add_mime = $form_state->getValue([
@@ -291,12 +291,12 @@ class IslandoraBinaryObjectAdmin extends FormBase {
    * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
+    $form_state->loadInclude('islandora_binary_object', 'inc', 'includes/db');
     // See if the user has uploaded a new file and if so create a new entry in
     // the thumbnails table for it.
     $triggering_element = $form_state->getTriggeringElement();
     if ($triggering_element['#name'] == 'islandora-binary-object-submit') {
       if (!empty($form_state->getValue(['upload_fieldset', 'upload']))) {
-        module_load_include('inc', 'islandora_binary_object', 'includes/db');
         $file = $this->fileEntityStorage->load(reset($form_state->getValue(['upload_fieldset', 'upload'])));
         $file->setPermanent();
         file_move($file, 'public://islandora_binary_object_thumbnails');

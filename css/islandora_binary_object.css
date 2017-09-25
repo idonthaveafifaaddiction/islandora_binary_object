@@ -1,11 +1,11 @@
 .islandora-binary-object-admin .form-item {
-    display: inline;
+  display: inline;
 }
 
 .islandora-binary-object-admin .form-text {
-    max-width: 25%;
+  max-width: 25%;
 }
 
 .islandora-binary-object-admin .islandora-binary-object-delete {
-    display: block;
+  display: block;
 }

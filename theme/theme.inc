@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file
  * Handles the display of binary objects.
@@ -18,31 +19,31 @@ function template_preprocess_islandora_binary_object(array &$variables) {
   if (isset($islandora_object['OBJ']) && islandora_datastream_access(ISLANDORA_VIEW_OBJECTS, $islandora_object['OBJ'])) {
     $extensions = islandora_get_extensions_for_datastream($islandora_object, 'OBJ');
     $extension = reset($extensions);
-    $variables['islandora_binary_object_info'] = t('This is a downloadable object of filetype @extension and size @size.', array(
+    $variables['islandora_binary_object_info'] = t('This is a downloadable object of filetype @extension and size @size.', [
       '@extension' => $extension,
       '@size' => format_size($islandora_object['OBJ']->size),
-    ));
+    ]);
 
     $link = Link::createFromRoute(
       $islandora_object['OBJ']->label,
       'islandora.download_datastream',
       ['object' => $islandora_object->id, 'datastream' => 'OBJ']
     )->toString();
-    $display['download'] = array(
+    $display['download'] = [
       '#type' => 'item',
       '#title' => t('Download'),
       '#markup' => $link,
-    );
+    ];
 
     $variables['islandora_binary_object_download'] = \Drupal::service("renderer")->render($display['download']);
   }
 
   // Thumbnail.
   if (isset($islandora_object['TN']) && islandora_datastream_access(ISLANDORA_VIEW_OBJECTS, $islandora_object['TN'])) {
-    $img = array(
+    $img = [
       '#theme' => 'image',
       '#uri' => Url::fromRoute('islandora.view_datastream_view', ['object' => $islandora_object->id, 'datastream' => 'TN'])->toString(),
-    );
+    ];
     $variables['islandora_thumbnail_img'] = \Drupal::service("renderer")->render($img);
   }
   $variables['parent_collections'] = islandora_get_parents_from_rels_ext($islandora_object);
