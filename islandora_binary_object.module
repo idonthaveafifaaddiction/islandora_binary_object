@@ -97,7 +97,6 @@ function islandora_binary_object_xml_form_builder_forms() {
  * Implements hook_islandora_ingest_steps().
  */
  // @codingStandardIgnoreStart
-
 function islandora_binary_object_islandora_binaryObjectCModel_islandora_ingest_steps() {
 // @codingStandardIgnoreEnd
   return [
@@ -115,7 +114,6 @@ function islandora_binary_object_islandora_binaryObjectCModel_islandora_ingest_s
  * Implements hook_CMODEL_PID_islandora_view_object().
  */
 // @codingStandardIgnoreStart
-// Codesniffer doesn't like the mixed cases in the content model PID and wants a different form.
 function islandora_binary_object_islandora_binaryObjectCModel_islandora_view_object(AbstractObject $object) {
 // @codingStandardIgnoreEnd
   return [
@@ -134,7 +132,6 @@ function islandora_binary_object_islandora_binaryObjectCModel_islandora_view_obj
  * Implements hook_islandora_CMODEL_PID_derivative().
  */
 // @codingStandardIgnoreStart
-// Codesniffer doesn't like the mixed cases in the content model PID and wants a different form.
 function islandora_binary_object_islandora_binaryObjectCModel_islandora_derivative() {
 // @codingStandardIgnoreEnd
   return [
