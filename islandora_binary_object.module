@@ -97,7 +97,7 @@ function islandora_binary_object_xml_form_builder_forms() {
  * Implements hook_islandora_ingest_steps().
  */
  // @codingStandardIgnoreStart
- // Codesniffer doesn't like the mixed cases in the content model PID and wants a different form.
+
 function islandora_binary_object_islandora_binaryObjectCModel_islandora_ingest_steps() {
 // @codingStandardIgnoreEnd
   return [
