@@ -1,3 +1,4 @@
 islandora-binary-object:
   css:
-    css/islandora_binary_object.css: {}
+    theme:
+      css/islandora_binary_object.css: {}

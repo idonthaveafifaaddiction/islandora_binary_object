@@ -96,9 +96,9 @@ function islandora_binary_object_xml_form_builder_forms() {
 /**
  * Implements hook_islandora_ingest_steps().
  */
- // @codingStandardIgnoreStart
+ // @codingStandardsIgnoreStart
 function islandora_binary_object_islandora_binaryObjectCModel_islandora_ingest_steps() {
-// @codingStandardIgnoreEnd
+// @codingStandardsIgnoreEnd
   return [
     'islandora_binary_object' => [
       'weight' => 10,
@@ -113,9 +113,9 @@ function islandora_binary_object_islandora_binaryObjectCModel_islandora_ingest_s
 /**
  * Implements hook_CMODEL_PID_islandora_view_object().
  */
-// @codingStandardIgnoreStart
+// @codingStandardsIgnoreStart
 function islandora_binary_object_islandora_binaryObjectCModel_islandora_view_object(AbstractObject $object) {
-// @codingStandardIgnoreEnd
+// @codingStandardsIgnoreEnd
   return [
     // XXX: Because islandora_as_renderable_array isn't the best we are going to
     // wrap this in an array.
@@ -131,9 +131,9 @@ function islandora_binary_object_islandora_binaryObjectCModel_islandora_view_obj
 /**
  * Implements hook_islandora_CMODEL_PID_derivative().
  */
-// @codingStandardIgnoreStart
+// @codingStandardsIgnoreStart
 function islandora_binary_object_islandora_binaryObjectCModel_islandora_derivative() {
-// @codingStandardIgnoreEnd
+// @codingStandardsIgnoreEnd
   return [
     [
       'source_dsid' => NULL,
