@@ -12,7 +12,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 /**
  * Confirmation form for deleting thumbnail associations.
  */
-class IslandoraBinaryObjectDeleteAssociationForm extends ConfirmFormBase {
+class DeleteAssociationForm extends ConfirmFormBase {
 
   protected $fileEntityStorage;
   protected $associationId;

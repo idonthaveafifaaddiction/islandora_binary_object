@@ -10,7 +10,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 /**
  * Upload form when ingesting binary objects.
  */
-class IslandoraBinaryObjectUploadForm extends FormBase {
+class UploadForm extends FormBase {
 
   protected $fileEntityStorage;
 
