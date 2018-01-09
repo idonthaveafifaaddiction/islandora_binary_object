@@ -2,13 +2,13 @@ islandora_binary_object.admin:
   path: '/admin/config/islandora/tools/binary-object-storage'
   defaults:
     _title: 'Binary Object Solution Pack'
-    _form: '\Drupal\islandora_binary_object\Form\IslandoraBinaryObjectAdmin'
+    _form: '\Drupal\islandora_binary_object\Form\Admin'
   requirements:
     _permission: 'administer site configuration'
 islandora_binary_object.delete_association_form:
   path: '/admin/config/islandora/tools/binary-object-storage/delete-association/{association_id}/{file_id}'
   defaults:
     _title: 'Delete Binary Object Association'
-    _form: '\Drupal\islandora_binary_object\Form\IslandoraBinaryObjectDeleteAssociationForm'
+    _form: '\Drupal\islandora_binary_object\Form\DeleteAssociationForm'
   requirements:
     _permission: 'administer site configuration'

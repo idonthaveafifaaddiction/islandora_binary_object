@@ -13,7 +13,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 /**
  * Configuration form for Binary Object.
  */
-class IslandoraBinaryObjectAdmin extends FormBase {
+class Admin extends FormBase {
 
   protected $fileEntityStorage;
 

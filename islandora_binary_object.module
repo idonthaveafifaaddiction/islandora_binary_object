@@ -101,7 +101,7 @@ function islandora_binary_object_islandora_binaryobjectcmodel_islandora_ingest_s
     'islandora_binary_object' => [
       'weight' => 10,
       'type' => 'form',
-      'form_class' => 'Drupal\islandora_binary_object\Form\IslandoraBinaryObjectUploadForm',
+      'form_class' => 'Drupal\islandora_binary_object\Form\UploadForm',
       'module' => 'islandora_binary_object',
       'file' => 'includes/binary_object_upload.form.inc',
     ],
