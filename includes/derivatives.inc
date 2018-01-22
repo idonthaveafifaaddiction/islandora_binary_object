@@ -37,9 +37,9 @@ function islandora_binary_object_create_thumbnail(AbstractObject $object, $force
       // if we do use that. If not default back to the generic image.
       if (isset($object['OBJ']) && islandora_binary_object_check_mime_type($object['OBJ']->mimetype)) {
         $fid_to_load = islandora_binary_object_retrieve_file_id_by_association($object['OBJ']->mimetype);
-        $file = file_load($fid_to_load);
-        $ds->mimetype = $file->filemime;
-        $ds->setContentFromFile($file->uri, FALSE);
+        $file = \Drupal::entityManager()->getStorage('file')->load($fid_to_load);
+        $ds->mimetype = $file->getMimeType();
+        $ds->setContentFromFile($file->getFileUri(), FALSE);
       }
       else {
         $ds->mimetype = 'image/png';
