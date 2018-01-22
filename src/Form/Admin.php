@@ -77,7 +77,7 @@ class Admin extends FormBase {
           'mimetype_table',
         ]));
         foreach ($checked_mimetypes as $value) {
-          if (NestedArray::getValue($mimes_to_add, [$triggering_fieldset, $value])) {
+          if ($mimes_to_add && NestedArray::getValue($mimes_to_add, [$triggering_fieldset, $value])) {
             unset($mimes_to_add[$triggering_fieldset][$value]);
           }
           else {
